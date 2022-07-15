@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react"
 import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core'
-import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
-import { truncate_wallet } from "./utils";
+import { truncate_wallet } from "../utils";
+import Mint from "../components/Mint"
+import Deploy from "../components/Deploy"
+import ModalComponent from "../components/Modal"
+import { getUserNFTAddress } from "../blockchain/index"
 
 const Container = styled.div`
   background: url('famu-flame.jpg');
@@ -66,58 +69,32 @@ const AddressWrapper = styled.div`
     font-size-adjust: 20px;
   }
 `
-const MintCardWrapper = styled.div`
-display: grid;
-grid-template-columns: repeat(auto-fill, 1fr);
-grid-auto-rows: auto;
-grid-gap: 2rem;
-`
-const MintCard = styled.div`
-border: 2px solid #e7e7e7;
-border-radius:1rem;
-background: #fff;
-height: 400px;
-width: 320px;
-  img{
-    height: 70%;
-    width:100%;
-  }
-`
-
-const MintBtn = styled.button`
-width: 80%;
-height: 80px;
-background-color: #1A4D2E;
-color: #fff;
-margin: 20px;
-border: 2px;
-border-radius:1rem;
-font-weight: bold;
-font-size:20px;
-text-align: center;
-cursor: pointer;
-`
-
-const DivWrapper = styled.div` 
-display: flex;
-align-items:center;
-justify-content: center;
-`
 
 
-const Mint = () => {
+const Main = () => {
+
   const injectedConnector = new InjectedConnector({ supportedChainIds: [1, 3, 4, 5, 42,], })
   const { chainId, account, activate, active, library } = useWeb3React()
   const onClick = () => {
     activate(injectedConnector)
   }
 
+  const [deployedAddress, setDeployedAddress] = useState(null)
+  const [state, setState] = useState(false)
   const [hasMinted, setHasMinted] = useState(false)
-
   useEffect(() => {
-    console.log({ chainId, account, active })
-  }, [account, chainId, library]);
 
+    const getUserNftAddress = async () => {
+      const addr = await getUserNFTAddress(library.provider, account)
+      setDeployedAddress(addr)
+    }
+
+    getUserNftAddress().catch(console.error)
+
+    return () => {
+      setState(true);
+    };
+  }, [deployedAddress, account, chainId, library]);
   return (
     <Container>
       <Header>
@@ -127,22 +104,14 @@ const Mint = () => {
         }
       </Header>
       <InnerContainer>
-        <MintCardWrapper>
-          <MintCard>
-            <img src="https://ipfs.io/ipfs/QmWriuCxSBT8W1ksb48w8DUj1EyLK42xk1rtTKt4Wx5j7Y" alt="nft image" />
-            <DivWrapper><MintBtn>Mint</MintBtn></DivWrapper>
-          </MintCard>
-          <MintCard>
-            <img src="https://ipfs.io/ipfs/QmYxwcNRcw7oVQkjU2GTmU1qXpMnnDbduf5RqzDV2tPQAS" alt="nft image" />
-            <DivWrapper><MintBtn>Mint</MintBtn></DivWrapper>
-          </MintCard>
-        </MintCardWrapper>
+        {!deployedAddress ? <Deploy {...{ account, chainId, library }} /> : <Mint {...{ account, chainId, library }} />}
+
       </InnerContainer>
     </Container>
   )
 }
 
-export default Mint
 
 
 
+export default Main

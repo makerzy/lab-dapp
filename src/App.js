@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import Mint from "./Mint"
+import Main from "./pages/Main"
 
 import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
@@ -15,7 +15,7 @@ function getLibrary(provider) {
 function App() {
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
-    <Mint />
+    <Main />
     </Web3ReactProvider>
   );
 }
