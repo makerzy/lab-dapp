@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import {constants} from "ethers"
 import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core'
 import { InjectedConnector } from '@web3-react/injected-connector'
@@ -86,7 +87,7 @@ const Main = () => {
 
     const getUserNftAddress = async () => {
       const addr = await getUserNFTAddress(library.provider, account)
-      setDeployedAddress(addr)
+      setDeployedAddress(addr === constants.AddressZero? null : addr)
     }
 
     getUserNftAddress().catch(console.error)
@@ -104,7 +105,10 @@ const Main = () => {
         }
       </Header>
       <InnerContainer>
-        {!deployedAddress ? <Deploy {...{ account, chainId, library }} /> : <Mint {...{ account, chainId, library }} />}
+        {!deployedAddress ? 
+        <Deploy {...{ account, chainId, library }} /> : 
+        <Mint {...{ account, chainId, library }} />
+        }
 
       </InnerContainer>
     </Container>

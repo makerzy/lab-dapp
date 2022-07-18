@@ -52,7 +52,7 @@ const Mint = ({ account, chainId, library }) => {
   const [displayModal, setDisplayModal] = useState(false)
   const methods = [mintWithSig712, mintWithSig, trickTransfer, mintWithSig]
   useEffect(() => {
-    console.log({ chainId, account })
+    console.log({ chainId, account, deployedAddress })
     // const addressInStorage= localStorage.getItem('deployedAddress');
     // if(!deployedAddress){
 
@@ -71,9 +71,11 @@ const Mint = ({ account, chainId, library }) => {
     <MintCardWrapper>
 
       {token_data.map((token, i) => (
-        <MintCard>
+        <MintCard key={i}>
           <img src={token.image} alt="nft image" />
-          <DivWrapper><MintBtn onClick={() => onClick(i)}>Mint</MintBtn></DivWrapper>
+          <DivWrapper>
+            <MintBtn onClick={() => onClick(i)}>Mint</MintBtn>
+          </DivWrapper>
         </MintCard>
       ))}
       {displayModal && <ModalComponent {...{ action: setDisplayModal }} />}
@@ -82,6 +84,3 @@ const Mint = ({ account, chainId, library }) => {
 }
 
 export default Mint
-
-
-
